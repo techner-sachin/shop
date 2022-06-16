@@ -53,7 +53,7 @@ class Products with ChangeNotifier {
   }
 
   void addProduct(Product product) {
-    final url = Uri.https(
+    /*final url = Uri.https(
         'shopapp-33e7d-default-rtdb.firebaseio.com', '/products.json');
     http.post(
       url,
@@ -64,15 +64,16 @@ class Products with ChangeNotifier {
         'price': product.price,
         'image': product.imageUrl,
       }),
-    );
+    );*/
 
     final newProduct = Product(
-        id: DateTime.now().toString(),
-        title: product.title,
-        description: product.description,
-        price: product.price,
-        imageUrl: product.imageUrl);
-    _items.insert(0, newProduct);
+      title: product.title,
+      description: product.description,
+      price: product.price,
+      imageUrl: product.imageUrl,
+      id: DateTime.now().toString(),
+    );
+    _items.add(newProduct);
     notifyListeners();
   }
 
