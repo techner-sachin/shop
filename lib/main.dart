@@ -4,7 +4,6 @@ import 'package:shop_app/providers/cart.dart';
 import 'package:shop_app/providers/order.dart';
 import 'package:shop_app/screens/cart_screen.dart';
 import 'package:shop_app/screens/edit_product_screen.dart';
-import 'package:shop_app/screens/login_screen.dart';
 import 'package:shop_app/screens/orders_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shop_app/screens/product_detail_screen.dart';
@@ -37,9 +36,8 @@ class MyApp extends StatelessWidget {
         title: 'Flutter',
         theme: ThemeData(
             primarySwatch: Colors.blue, textTheme: GoogleFonts.latoTextTheme()),
-        home: LogInScreen(),
+        home: ProductOverviewScreen(),
         routes: {
-          ProductOverviewScreen.routName: (ctx) => ProductOverviewScreen(),
           ProjectDetailScreen.routeName: (ctx) => ProjectDetailScreen(),
           CartScreen.routName: (ctx) => CartScreen(),
           OrdersScreen.routeName: (ctx) => OrdersScreen(),
