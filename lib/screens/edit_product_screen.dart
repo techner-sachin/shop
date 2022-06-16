@@ -25,33 +25,35 @@ class _EditProductScreenState extends State<EditProductScreen> {
     imageUrl: '',
   );
   var _initValues = {
-    'title':'',
-    'description':'',
-    'price':'',
-    'imageUrl':'',
-
+    'title': '',
+    'description': '',
+    'price': '',
+    'imageUrl': '',
   };
-var _isInit =true;
+  var _isInit = true;
 
   @override
   void initState() {
     _imageUrlFocusNode.addListener(_updateImageUrl);
     super.initState();
   }
-  void didChangeDependencies(){
-    if (_isInit) {
-   final productId = ModalRoute.of(context)?.settings.arguments as String;
-   if(productId != null){
-     _editedProduct = Provider.of<Products>(context, listen: false).findById(productId);
-     _initValues={
-       'title':_editedProduct.title,
-       'description':_editedProduct.description,
-       'price':_editedProduct.price.toString(),
-       'imageUrl':'',
-     };
-     _imageUrlController.text=_editedProduct.imageUrl;
-   }
 
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      final productId = ModalRoute.of(context)?.settings.arguments as String;
+      if (productId != null) {
+        _editedProduct =
+            Provider.of<Products>(context, listen: false).findById(productId);
+        _initValues = {
+          'title': _editedProduct.title,
+          'description': _editedProduct.description,
+          'price': _editedProduct.price.toString(),
+          // 'imageUrl': _editedProduct.imageUrl,
+          'imageUrl': '',
+        };
+        _imageUrlController.text = _editedProduct.imageUrl;
+      }
     }
     _isInit = false;
     super.didChangeDependencies();
@@ -69,6 +71,13 @@ var _isInit =true;
 
   void _updateImageUrl() {
     if (!_imageUrlFocusNode.hasFocus) {
+      if ((!_imageUrlController.text.startsWith('http') &&
+              !_imageUrlController.text.startsWith('https')) ||
+          (!_imageUrlController.text.endsWith('.png') &&
+              !_imageUrlController.text.endsWith('.jpg') &&
+              !_imageUrlController.text.endsWith('.jpeg'))) {
+        return;
+      }
       setState(() {});
     }
   }
@@ -79,14 +88,12 @@ var _isInit =true;
       return;
     }
     _form.currentState?.save();
-    if (_editedProduct.id!=null) {
-      Provider.of<Products>(
-          context, listen: false).updateProduct(_editedProduct.id,
-          _editedProduct);
-    }  else{
+    if (_editedProduct.id != null) {
+      Provider.of<Products>(context, listen: false)
+          .updateProduct(_editedProduct.id, _editedProduct);
+    } else {
       Provider.of<Products>(context, listen: false).addProduct(_editedProduct);
     }
-
     Navigator.of(context).pop();
   }
 
@@ -117,20 +124,18 @@ var _isInit =true;
                 },
                 validator: (value) {
                   if (value!.isEmpty) {
-                    return 'please enter the field ';
-                  } else {
-                    return null;
+                    return 'Please provide a value.';
                   }
+                  return null;
                 },
                 onSaved: (value) {
                   _editedProduct = Product(
-                    title: value.toString(),
-                    price: _editedProduct.price,
-                    description: _editedProduct.description,
-                    imageUrl: _editedProduct.imageUrl,
-                      id:_editedProduct.id,
-                      isFavorite: _editedProduct.isFavorite
-                  );
+                      title: value.toString(),
+                      price: _editedProduct.price,
+                      description: _editedProduct.description,
+                      imageUrl: _editedProduct.imageUrl,
+                      id: _editedProduct.id,
+                      isFavorite: _editedProduct.isFavorite);
                 },
               ),
               TextFormField(
@@ -144,40 +149,38 @@ var _isInit =true;
                 },
                 validator: (value) {
                   if (value!.isEmpty) {
-                    return 'please enter the price ';
+                    return 'Please enter a price.';
                   }
                   if (double.tryParse(value) == null) {
-                    return 'please enter a valid number';
+                    return 'Please enter a valid number.';
                   }
                   if (double.parse(value) <= 0) {
-                    return 'please enter valid amount';
+                    return 'Please enter a number greater than zero.';
                   }
-
                   return null;
                 },
                 onSaved: (value) {
                   _editedProduct = Product(
-                    title: _editedProduct.title,
-                    price: double.parse(value!),
-                    description: _editedProduct.description,
-                    imageUrl: _editedProduct.imageUrl,
-                      id:_editedProduct.id,
-                      isFavorite: _editedProduct.isFavorite
-                  );
+                      title: _editedProduct.title,
+                      price: double.parse(value!),
+                      description: _editedProduct.description,
+                      imageUrl: _editedProduct.imageUrl,
+                      id: _editedProduct.id,
+                      isFavorite: _editedProduct.isFavorite);
                 },
               ),
               TextFormField(
-                initialValue: _initValues['Description'],
+                initialValue: _initValues['description'],
                 decoration: InputDecoration(labelText: 'Description'),
                 maxLines: 3,
                 keyboardType: TextInputType.multiline,
                 focusNode: _descriptionFocusNode,
                 validator: (value) {
                   if (value!.isEmpty) {
-                    return 'please enter the description ';
+                    return 'Please enter a description.';
                   }
                   if (value.length < 10) {
-                    return 'too short description';
+                    return 'Should be at least 10 characters long.';
                   }
                   return null;
                 },
@@ -187,8 +190,8 @@ var _isInit =true;
                     price: _editedProduct.price,
                     description: value.toString(),
                     imageUrl: _editedProduct.imageUrl,
-                      id:_editedProduct.id,
-                      isFavorite: _editedProduct.isFavorite
+                    id: _editedProduct.id,
+                    isFavorite: _editedProduct.isFavorite,
                   );
                 },
               ),
@@ -198,7 +201,7 @@ var _isInit =true;
                   Container(
                     width: 100,
                     height: 100,
-                    margin: const EdgeInsets.only(
+                    margin: EdgeInsets.only(
                       top: 8,
                       right: 10,
                     ),
@@ -219,7 +222,6 @@ var _isInit =true;
                   ),
                   Expanded(
                     child: TextFormField(
-
                       decoration: InputDecoration(labelText: 'Image URL'),
                       keyboardType: TextInputType.url,
                       textInputAction: TextInputAction.done,
@@ -228,12 +230,18 @@ var _isInit =true;
                       onFieldSubmitted: (_) {
                         _saveForm();
                       },
-                      validator: (value){
-                        if(value!.isEmpty){
-                          return 'please enter a Url ';
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter an image URL.';
                         }
-                        if(!value.contains('http') && !value.contains('https')) {
-                          return 'please enter valid Url';
+                        if (!value.startsWith('http') &&
+                            !value.startsWith('https')) {
+                          return 'Please enter a valid URL.';
+                        }
+                        if (!value.endsWith('.png') &&
+                            !value.endsWith('.jpg') &&
+                            !value.endsWith('.jpeg')) {
+                          return 'Please enter a valid image URL.';
                         }
                         return null;
                       },
@@ -243,8 +251,8 @@ var _isInit =true;
                           price: _editedProduct.price,
                           description: _editedProduct.description,
                           imageUrl: value,
-                          id:_editedProduct.id,
-                          isFavorite: _editedProduct.isFavorite
+                          id: _editedProduct.id,
+                          isFavorite: _editedProduct.isFavorite,
                         );
                       },
                     ),
